@@ -15,7 +15,7 @@ namespace ConsoleApplication4
         private static void Main()
         {
             // ----------------- read PoseNew2 -----------------
-            var path = @"C:\QiutongZhu\Mat2CS_TEST\Data\1009_PoseNew2.csv";
+            var path = @".\\Data\1009_PoseNew2.csv";
             Matrix<double> PoseNew2 = DelimitedReader.Read<double>(path, false, ",", false);
 
             //Console.WriteLine(PoseNew2);
@@ -27,7 +27,7 @@ namespace ConsoleApplication4
             var quat16 = PoseNew2.SubMatrix(0, n_Row, 3, n_Col - 3); // Get quat16 (25x4)
 
             // ----------------- read TranslNew2 -----------------
-            path = @"C:\QiutongZhu\Mat2CS_TEST\Data\1009_TranslNew2.csv";
+            path = @".\\Data\1009_TranslNew2.csv";
             Matrix<double> TranslNew2 = DelimitedReader.Read<double>(path, false, ",", true);
 
             //Console.WriteLine(TranslNew2);
@@ -38,17 +38,17 @@ namespace ConsoleApplication4
             Matrix<double> transVar = TranslNew2.SubMatrix(0, n_Row, 1, n_Col - 1); // Get transVar (25x3)
 
             // ----------------- read RotNew2 -----------------
-            path = @"C:\QiutongZhu\Mat2CS_TEST\Data\1009_RotNew2.csv";
+            path = @".\\Data\1009_RotNew2.csv";
             Matrix<double> RotNew2 = DelimitedReader.Read<double>(path, false, ",", true);
 
             n_Col = RotNew2.ColumnCount;
             n_Row = RotNew2.RowCount;
-
+        
             // Extract desired submatrix
             var rotVars = RotNew2.SubMatrix(0, n_Row, 1, n_Col - 1); // Get rotVars (25x3)
 
             // ----------------- read RotNew2 -----------------
-            path = @"C:\QiutongZhu\Mat2CS_TEST\Data\eulZYX.csv";
+            path = @".\\Data\eulZYX.csv";
             Matrix<double> EluNew2 = DelimitedReader.Read<double>(path, false, ",", false);
 
 
@@ -77,10 +77,17 @@ namespace ConsoleApplication4
                 Mat RotationVector = new Mat();
                 //Mat RodInputMat = new Mat();
                 Mat RodInputMat = q2m(Temp_Quat.At<double>(0, 0), Temp_Quat.At<double>(1, 0), Temp_Quat.At<double>(2, 0), Temp_Quat.At<double>(3, 0));
-                //Cv2.Rodrigues(RodInputMat, RotationVector);
+                
+                
+                Cv2.Rodrigues(RodInputMat, RotationVector);
+                //Console.WriteLine(i);
+                //printMat(RotationVector);
                 //printMat(RotationVector);
                 //Temp_Rvector_gripper2base.At<double>(j, 0) = quat16[i, j];
-                R_gripper2base.Add(RodInputMat);
+                R_gripper2base.Add(RotationVector);
+                //Console.WriteLine(i);
+                //printMat(RotationVector);
+
             }
             //printMat(R_gripper2base[1]);
 
@@ -132,7 +139,6 @@ namespace ConsoleApplication4
             Cv2.CalibrateHandEye(R_gripper2base, t_gripper2base, R_target2cam, t_target2cam, OutputArray.Create(rvecs), OutputArray.Create(tvecs));
             printMat(tvecs);
             printMat(rvecs);
-
         }
 
 
